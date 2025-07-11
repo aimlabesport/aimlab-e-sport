@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Success</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(0,0,0,0.7);
+      padding: 30px 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #00e6e6;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    h2 {
+      color: #00e6e6;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    .details {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: left;
+    }
+    .details h3 {
+      text-align: center;
+      color: #00e6e6;
+      margin-bottom: 15px;
+    }
+    .details p {
+      margin: 8px 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 12px;
+      color: #aaa;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 25px;
+      background: #00e6e6;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background: #00b3b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Payment Successful!</h2>
+    <p id="paymentId"></p>
+
+    <div class="details">
+      <h3>Registration Details</h3>
+      <p><strong>Name:</strong> <span id="name"></span></p>
+      <p><strong>Game UID:</strong> <span id="gameUid"></span></p>
+
+      <hr style="border: 1px solid #00e6e6;">
+
+      <h3>Your Room Details</h3>
+      <p><strong>Room ID:</strong> <span id="roomId">Loading...</span></p>
+      <p><strong>Password:</strong> <span id="roomPass">Loading...</span></p>
+    </div>
+
+    <a href="index.html" class="btn">Back to Home</a>
+    <div class="footer">© 2025 Aimlab Esport</div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentId = urlParams.get('payment_id') || "Not Available";
+    const name = urlParams.get('name') || "Not Available";
+    const gameUid = urlParams.get('gameUid') || "Not Available";
+
+    document.getElementById('paymentId').innerText = "Payment ID: " + paymentId;
+    document.getElementById('name').innerText = name;
+    document.getElementById('gameUid').innerText = gameUid;
+  </script>
+
+  <!-- Firebase SDK scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <script>
+    // ✅ Replace below config with your actual Firebase config
+    var firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Fetch room details
+    firebase.database().ref('room').once('value').then(function(snapshot) {
+      var roomId = snapshot.val().id || "Not Available";
+      var roomPass = snapshot.val().password || "Not Available";
+
+      document.getElementById('roomId').innerText = roomId;
+      document.getElementById('roomPass').innerText = roomPass;
+    }).catch(function(error){
+      console.error("Error fetching room details:", error);
+      document.getElementById('roomId').innerText = "Error";
+      document.getElementById('roomPass').innerText = "Error";
+    });
+  </script>
+
+</body>
+</html>
